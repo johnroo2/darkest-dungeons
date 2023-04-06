@@ -1,0 +1,302 @@
+package dungeons;
+
+import areas.AreaBox;
+import areas.AreaCircle;
+import areas.AreaCorridor;
+import control.Controller;
+import enemies.silentsands.goblinmage.GoblinMage;
+import enemies.silentsands.horderat.HordeRat;
+import enemies.silentsands.sandshaman.SandShaman;
+import enemies.silentsands.scorpion.Scorpion;
+import enemies.silentsands.scorpionqueen.ScorpionQueen;
+import enemies.silentsands.snake.Snake;
+import enemies.silentsands.spikedturtle.SpikedTurtle;
+import project.Area;
+import project.Dungeon;
+import project.Tile;
+
+public class SilentSands extends Dungeon{
+	private Pen p = new Pen(0, 0);
+	private int lastSeed = -1;
+	
+	public SilentSands() {
+		super("Silent Sands", 0);
+		this.spawnX = 320;
+		this.spawnY = 320;
+		this.border = Tile.DIRTWALL;
+		this.inner = Tile.SAND;
+	}
+	
+	@Override
+	public void generate() {
+		//7 rooms to boss, including starting
+		//no split paths
+		//rooms consist of 16x16 squares, 6x10 halls, and boss is a circle of radius 12
+		int v, h;
+		if(Controller.random.nextInt(0, 2) == 0) {v = 0;}
+		else {v = 2;}
+		if(Controller.random.nextInt(0, 2) == 0) {h = 1;}
+		else {h = 3;}
+		int dir = path(v, h, 10, -1);
+		if(dir == 0) {
+			add(new AreaCircle(p.drawX-160, p.drawY-320, 12, border, inner, new int[] {0, 4, 10, 23}));
+			new ScorpionQueen(p.drawX+320, p.drawY+120);
+		}
+		else if(dir == 1) {
+			add(new AreaCircle(p.drawX-320, p.drawY-160, 12, border, inner, new int[] {1, 4, 23, 10}));
+			new ScorpionQueen(p.drawX+120, p.drawY+320);
+		}
+		else if(dir == 2) {
+			add(new AreaCircle(p.drawX-160, p.drawY-40, 12, border, inner, new int[] {0, 4, 10, 0}));
+			new ScorpionQueen(p.drawX+320, p.drawY+440);
+		}
+		else if(dir == 3) {
+			add(new AreaCircle(p.drawX-40, p.drawY-160, 12, border, inner, new int[] {1, 4, 0, 10}));
+			new ScorpionQueen(p.drawX+440, p.drawY+320);
+		}
+	}
+	
+	@Override
+	public void add(Area a) {
+		this.areas.add(a);
+	}
+	
+	public void add(Area a, int space, int x, int y) {
+		this.add(a);
+		int room = this.getSeed(0, 13, lastSeed);
+		lastSeed = room;
+//		if(space <= 9) {
+//			room = Main.random.nextInt(5, 13);
+//		}
+//		else {
+//			room = Main.random.nextInt(0, 5);
+//		}
+		switch(room) {
+		case 0:
+			new Scorpion(x + 130, y + 150);
+			new Scorpion(x + 150, y + 510);
+			new Scorpion(x + 490, y + 130);
+			new Scorpion(x + 510, y + 490);
+			a.setBox(6, 6, 5, 5, border);
+			//a.setBox(6, 6, 5, 5, Tile.LIGHTWATER, false);
+			break;
+		case 1:
+			new Snake(x + 230, y + 230);
+			new Snake(x + 320, y + 320);
+			new Snake(x + 410, y + 410);
+			for(int i = 10; i <= 15; i++) {
+				a.setLine(1, i-10, i, 0, null);
+			}
+			a.set(15, 5, border);
+			for(int i = 10; i <= 14; i++) {
+				a.set(i, i-10, border);
+				a.set(i, i-9, border);
+			}
+			for(int i = 0; i <= 5; i++) {
+				a.setLine(1, 6-i, i, 10+i, null);
+			}
+			a.set(0, 10, border);
+			for(int i = 1; i <= 5; i++) {
+				a.set(i, i+9, border);
+				a.set(i, i+10, border);
+			}
+			break;
+		case 2:
+			new Scorpion(x + 150, y + 300);
+			new Scorpion(x + 300, y + 150);
+			new Snake(x + 500, y + 500);
+			a.setLine(0, 4, 7, 7, border);
+			a.setLine(1, 4, 7, 7, border);
+			break;
+		case 3: 
+			new Scorpion(x + 150, y + 150);
+			new Scorpion(x + 490, y + 150);
+			new Scorpion(x + 320, y + 490);
+			new GoblinMage(x + 320, y + 320);
+			break;
+		case 4:
+			new GoblinMage(x + 160, y + 480);
+			new GoblinMage(x + 480, y + 480);
+			new GoblinMage(x + 320, y + 160);
+			for(int i = 4; i <= 11; i++) {
+				for(int j = 7; j <= 8; j++) {
+					a.set(i, j, border);
+				}
+			}
+			break;
+		case 5:
+			new SpikedTurtle(x + 210, y + 430);
+			new SpikedTurtle(x + 430, y + 210);
+			new Snake(x + 280, y + 280);
+			a.set(4, 4, border);
+			a.set(4, 8, border);
+			a.set(8, 4, border);
+			a.setBox(7, 7, 10, 10, border); //purposely setting out of bounds
+			break;
+		case 6:
+			new GoblinMage(x + 160, y + 250);
+			new GoblinMage(x + 480, y + 390);
+			new SpikedTurtle(x + 320, y + 320);
+			a.setBox(3, 3, 4, 9, border);
+			a.setBox(3, 3, 9, 4, border);
+			break;
+		case 7:
+			HordeRat.newHorde(x+100, y+100, 440, 440, 11);
+			break;
+		case 8:
+			HordeRat.newHorde(x+100, y+100, 160, 160, 4);
+			HordeRat.newHorde(x+380, y+380, 160, 160, 4);
+			new Snake(x + 480, y + 240);
+			new Snake(x + 240, y + 480);
+			a.setBox(7, 7, -2, 11, border);
+			a.setBox(7, 7, 11, -2, border);
+			a.setBox(2, 2, 7, 7, border);
+			break;
+		case 9: 
+			new SandShaman(x + 320, y + 320);
+			new Scorpion(x + 160, y + 160);
+			new Scorpion(x + 480, y + 480);
+			new Snake(x + 480, y + 160);
+			new Snake(x + 160, y + 480);
+			a.setLine(0, 2, 4, 5, border);
+			a.setLine(0, 2, 4, 10, border);
+			a.setLine(0, 2, 10, 5, border);
+			a.setLine(0, 2, 10, 10, border);
+			break;
+		case 10:
+			new SandShaman(x + 320, y + 320);
+			HordeRat.newHorde(x+100, y+100, 100, 100, 2);
+			HordeRat.newHorde(x+440, y+100, 100, 100, 2);
+			HordeRat.newHorde(x+100, y+440, 100, 100, 2);
+			HordeRat.newHorde(x+440, y+440, 100, 100, 2);
+			break;
+		case 11: 
+			new SandShaman(x + 160, y + 250);
+			new SandShaman(x + 480, y + 390);
+			new GoblinMage(x + 320, y + 120);
+			new GoblinMage(x + 320, y + 540);
+			a.setBox(4, 4, 6, 6, border);
+			break;
+		case 12:
+			new SandShaman(x + 320, y + 160);
+			new SandShaman(x + 400, y + 420);
+			new SandShaman(x + 240, y + 420);
+			a.setBox(2, 2, 7, 7, border);
+			break;
+		}			
+	}
+	
+	public void makeHallUp() {
+		p.drawY -= 400; 
+		p.drawX += 200;
+		AreaCorridor a = new AreaCorridor(p.drawX, p.drawY, 6, 10, 0, border, inner);
+		add(a);
+		p.drawY -= 640;
+		p.drawX -= 200;
+	}
+	
+	public void makeHallLeft() {
+		p.drawX -= 400; 
+		p.drawY += 200;
+		AreaCorridor a = new AreaCorridor(p.drawX, p.drawY, 10, 6, 1, border, inner);
+		add(a);
+		p.drawX -= 640;
+		p.drawY -= 200;
+	}
+	
+	public void makeHallDown() {
+		p.drawY += 640; 
+		p.drawX += 200;
+		AreaCorridor a = new AreaCorridor(p.drawX, p.drawY, 6, 10, 0, border, inner);
+		add(a);
+		p.drawY += 400;
+		p.drawX -= 200;
+	}
+	
+	public void makeHallRight() {
+		p.drawX += 640; 
+		p.drawY += 200;
+		AreaCorridor a = new AreaCorridor(p.drawX, p.drawY, 10, 6, 1, border, inner);
+		add(a);
+		p.drawX += 400;
+		p.drawY -= 200;
+	}
+	
+	public int path(int v, int h, int space, int lastdir) {
+		if(space == 0) {
+			return (lastdir+2)%4;
+		}
+		if(Controller.random.nextInt(0, 2) == 0) {
+			if(lastdir == -1) {
+				add(new AreaBox(p.drawX, p.drawY, 16, 16, border, inner, getLink(new int[] {h, lastdir})));
+			}
+			else {
+				add(new AreaBox(p.drawX, p.drawY, 16, 16, border, inner, getLink(new int[] {h, lastdir})), space, p.drawX, p.drawY);
+			}
+			if(h == 1) {
+				makeHallLeft();
+			}
+			else if(h == 3) {
+				makeHallRight();
+			}
+			return path(v, h, space-1, (h+2)%4);
+		}
+		else {
+			if(lastdir == -1) {
+				add(new AreaBox(p.drawX, p.drawY, 16, 16, border, inner, getLink(new int[] {v, lastdir})));
+			}
+			else {
+				add(new AreaBox(p.drawX, p.drawY, 16, 16, border, inner, getLink(new int[] {v, lastdir})), space, p.drawX, p.drawY);
+			}
+			if(v == 0) {
+				makeHallUp();
+			}
+			else if(v == 2) {
+				makeHallDown();
+			}
+			return path(v, h, space-1, (v+2)%4);
+		}
+	}
+	
+	public int[] getLink(int[] cardinal) {
+		int space = 0;
+		for(int i = 0; i < cardinal.length; i++) {
+			if(cardinal[i] >= 0 && cardinal[i] <= 3) {
+				space += 4;
+			}
+		}
+		int[] out = new int[space];
+		int insert = 0;
+		for(int i = 0; i < cardinal.length; i++) {
+			if(cardinal[i] < 0) {
+				continue;
+			}
+			else if(cardinal[i] == 0) {
+				out[insert] = 0;
+				out[insert+1] = 4;
+				out[insert+2] = 6;
+				out[insert+3] = 0;
+			}
+			else if(cardinal[i] == 1) {
+				out[insert] = 1;
+				out[insert+1] = 4;
+				out[insert+2] = 0;
+				out[insert+3] = 6;
+			}
+			else if(cardinal[i] == 2) {
+				out[insert] = 0;
+				out[insert+1] = 4;
+				out[insert+2] = 6;
+				out[insert+3] = 15;
+			}
+			else if(cardinal[i] == 3) {
+				out[insert] = 1;
+				out[insert+1] = 4;
+				out[insert+2] = 15;
+				out[insert+3] = 6;
+			}
+			insert += 4;
+		}
+		return out;
+	}
+}

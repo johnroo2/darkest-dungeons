@@ -1,0 +1,4 @@
+SPAWN: 0
+START LEVEL: 1
+RINGMODE: false
+
