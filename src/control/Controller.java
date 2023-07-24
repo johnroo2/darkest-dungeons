@@ -182,7 +182,7 @@ public class Controller extends JPanel implements Runnable, KeyListener, MouseLi
 		chr.getDefaultWeapon().equip();
 		chr.getDefaultAbility().equip();
 		
-		Dungeon d = new CorruptedCatacombs();
+		Dungeon d = new SilentSands();
 		chr.levelReached = d.getLevel();
 		d.init();
 		fixGame();
@@ -192,11 +192,11 @@ public class Controller extends JPanel implements Runnable, KeyListener, MouseLi
 	
 	//for testing only
 	public static void fixGame() {
-		chr.setInventory(0, Ring.Mechanical_Ring);
-		chr.setInventory(1, Weapon.Bow_Of_The_Fractured);
-		chr.setInventory(2, Ability.Sentinels_Quiver);
-		chr.setInventory(3, Armour.t10_leather);
-		chr.setLevel(12);
+//		chr.setInventory(0, Ring.Mechanical_Ring);
+//		chr.setInventory(1, Weapon.Bow_Of_The_Fractured);
+//		chr.setInventory(2, Ability.Sentinels_Quiver);
+//		chr.setInventory(3, Armour.t10_leather);
+//		chr.setLevel(12);
 	}
 	
 	//add a projectile to the stack

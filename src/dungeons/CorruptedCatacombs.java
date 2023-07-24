@@ -817,10 +817,10 @@ public class CorruptedCatacombs extends Dungeon{
 		if(Controller.coinflip()) {h = 1;}
 		else {h = 3;}
 		if(Controller.coinflip()) {
-			path(v, h, 1, v, -1, false); //7
+			path(v, h, 7, v, -1, false); //7
 		}
 		else {
-			path(v, h, 1, h, -1, false); //7
+			path(v, h, 7, h, -1, false); //7
 		}
 	}
 	
